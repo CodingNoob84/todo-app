@@ -5,27 +5,35 @@ import useFetchTodos from "@/hooks/fetchTodos";
 import { useAuth } from "@/context/AuthContext";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase/firebaseConfig";
+import Deleted from "./Deleted";
 
 function onSplitArray(todos) {
+  console.log(todos);
   const newTodos = [];
   const completedTodos = [];
+  const deletedTodos = [];
   if (todos.length > 0) {
     todos?.forEach((todo) => {
       if (todo.stage === "new") {
         newTodos.push(todo);
       } else if (todo.stage === "completed") {
         completedTodos.push(todo);
+      } else if (todo.stage === "deleted") {
+        deletedTodos.push(todo);
       }
     });
   }
+  newTodos.sort((a, b) => b.datetime.seconds - a.datetime.seconds);
+  completedTodos.sort((a, b) => b.datetime.seconds - a.datetime.seconds);
+  deletedTodos.sort((a, b) => b.datetime.seconds - a.datetime.seconds);
 
-  return { newTodos, completedTodos };
+  return { newTodos, completedTodos, deletedTodos };
 }
 
 function TodosData({ todos, setTodos, setTodo, setTodoId }) {
   //console.log(todos);
   const { currentUser } = useAuth();
-  const { newTodos, completedTodos } = onSplitArray(todos);
+  const { newTodos, completedTodos, deletedTodos } = onSplitArray(todos);
   //console.log(completedTodos);
   const handleCompleted = async (id, stageupdate) => {
     const updatedTodos = todos.map((todo) => {
@@ -33,6 +41,7 @@ function TodosData({ todos, setTodos, setTodo, setTodoId }) {
         return {
           ...todo,
           stage: stageupdate,
+          datetime: new Date(),
         };
       }
       return todo;
@@ -56,6 +65,7 @@ function TodosData({ todos, setTodos, setTodo, setTodoId }) {
       {completedTodos.length > 0 && (
         <Completed todos={completedTodos} handleCompleted={handleCompleted} />
       )}
+      {deletedTodos.length > 0 && <Deleted todos={deletedTodos} />}
     </div>
   );
 }

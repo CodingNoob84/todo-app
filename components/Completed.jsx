@@ -25,6 +25,7 @@ function Completed({ todos, handleCompleted }) {
               <MdDelete
                 size={30}
                 className="scale-75 hover:scale-110 hover:text-cyan-500 cursor-pointer"
+                onClick={() => handleCompleted(todo.id, "deleted")}
               />
             </div>
           ))}

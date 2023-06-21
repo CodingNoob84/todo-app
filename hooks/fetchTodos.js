@@ -16,8 +16,9 @@ export default function useFetchTodos() {
         const docRef = doc(db, "users", currentUser.uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setTodos(docSnap.data().todos);
+          setTodos(docSnap.data().todos || []);
         } else {
+          console.log("");
           setTodos([]);
         }
       } catch (err) {

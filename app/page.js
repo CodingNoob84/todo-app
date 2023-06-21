@@ -22,7 +22,7 @@ export default function Home() {
   const { todos, setTodos, loading, error } = useFetchTodos();
   const [todo, setTodo] = useState("");
   const [todoId, setTodoId] = useState("");
-  //console.log(todos?.length);
+  console.log(todos);
   //console.log(currentUser);
   useEffect(() => {
     if (!currentUser) {
