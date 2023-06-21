@@ -5,7 +5,7 @@ import React from "react";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { TiTick } from "react-icons/ti";
 
-function NewTodo({ todos, handleCompleted }) {
+function NewTodo({ todos, handleCompleted, setTodo, setTodoId }) {
   return (
     <div className="relative">
       <div className="absolute -top-2 left-[115px] w-[70px] bg-red-900 px-2 text-xl font-bold text-center rounded-md">
@@ -27,6 +27,10 @@ function NewTodo({ todos, handleCompleted }) {
               <MdEdit
                 size={30}
                 className="scale-75 hover:scale-110 hover:text-violet-500 cursor-pointer"
+                onClick={() => {
+                  setTodo(todo.desc);
+                  setTodoId(todo.id);
+                }}
               />
               <MdDelete
                 size={30}

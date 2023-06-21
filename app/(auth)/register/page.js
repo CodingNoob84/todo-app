@@ -24,14 +24,15 @@ function RegisterPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
 
-  const { login, signup, currentUser } = useAuth();
+  const { login, signup, currentUser, createUser } = useAuth();
   //console.log(currentUser);
 
   const submitHandler = async () => {
     setError(ValidationFunction(username, email, password));
     if (error === null) {
       console.log(`username=${username}; email=${email}; password=${password}`);
-      await signup(username, email, password);
+      const result = await createUser(email, password, username);
+      console.log(result);
     }
   };
   return (

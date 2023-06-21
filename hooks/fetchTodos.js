@@ -18,7 +18,7 @@ export default function useFetchTodos() {
         if (docSnap.exists()) {
           setTodos(docSnap.data().todos);
         } else {
-          setTodos({});
+          setTodos([]);
         }
       } catch (err) {
         setError("Failed to load todos");

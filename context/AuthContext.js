@@ -8,6 +8,7 @@ import {
   onAuthStateChanged,
   signInWithPopup,
   GoogleAuthProvider,
+  updateProfile,
 } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 
@@ -51,6 +52,17 @@ export function AuthProvider({ children }) {
     return;
   }
 
+  const createUser = (email, password, username) => {
+    return createUserWithEmailAndPassword(auth, email, password).then(
+      (userCredential) => {
+        const user = userCredential.user;
+        return updateProfile(user, { displayName: username }).then(() => {
+          return user.user;
+        });
+      }
+    );
+  };
+
   function login(email, password) {
     return signInWithEmailAndPassword(auth, email, password);
   }
@@ -72,6 +84,7 @@ export function AuthProvider({ children }) {
     login,
     signup,
     logout,
+    createUser,
   };
 
   return (

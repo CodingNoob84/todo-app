@@ -1,6 +1,8 @@
 "use client";
 import { useAuth } from "@/context/AuthContext";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+
 const ValidationFunction = (email, password) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -16,6 +18,10 @@ const ValidationFunction = (email, password) => {
 };
 
 function LoginPage() {
+  const router = useRouter();
+  if (currentUser) {
+    router.push("/");
+  }
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -33,16 +39,18 @@ function LoginPage() {
       console.log(result);
     }
   };
-  console.log(currentUser);
+
   return (
     <div className="min-w-screen min-h-screen flex justify-center items-center bg-gradient-to-r from-purple-200 via-purple-400 to-purple-800">
       <div className="w-[350px] h-[420px] p-5 flex flex-col gap-5 border bg-slate-900 text-white shadow-2xl shadow-violet-600">
         <div className="text-xl font-bold uppercase flex justify-center items-center">
           Login
         </div>
-        <div className="flex justify-center text-red-700">
-          Invalid Email or Password
-        </div>
+        {error && (
+          <div className="flex justify-center text-red-700">
+            Invalid Email or Password
+          </div>
+        )}
         <div className="flex flex-col gap-2">
           <div className="flex flex-col">
             <label>Email</label>

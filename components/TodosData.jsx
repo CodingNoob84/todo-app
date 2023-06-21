@@ -9,22 +9,24 @@ import { db } from "@/firebase/firebaseConfig";
 function onSplitArray(todos) {
   const newTodos = [];
   const completedTodos = [];
+  if (todos.length > 0) {
+    todos?.forEach((todo) => {
+      if (todo.stage === "new") {
+        newTodos.push(todo);
+      } else if (todo.stage === "completed") {
+        completedTodos.push(todo);
+      }
+    });
+  }
 
-  todos?.forEach((todo) => {
-    if (todo.stage === "new") {
-      newTodos.push(todo);
-    } else if (todo.stage === "completed") {
-      completedTodos.push(todo);
-    }
-  });
   return { newTodos, completedTodos };
 }
 
-function TodosData({ todos, setTodos }) {
+function TodosData({ todos, setTodos, setTodo, setTodoId }) {
   //console.log(todos);
   const { currentUser } = useAuth();
   const { newTodos, completedTodos } = onSplitArray(todos);
-
+  console.log(completedTodos);
   const handleCompleted = async (id, stageupdate) => {
     const updatedTodos = todos.map((todo) => {
       if (todo.id === id) {
@@ -43,8 +45,17 @@ function TodosData({ todos, setTodos }) {
   };
   return (
     <div className="flex flex-col justify-center items-center md:items-start gap-[10px] md:flex-row">
-      <NewTodo todos={newTodos} handleCompleted={handleCompleted} />
-      <Completed todos={completedTodos} handleCompleted={handleCompleted} />
+      {newTodos.length > 0 && (
+        <NewTodo
+          todos={newTodos}
+          handleCompleted={handleCompleted}
+          setTodo={setTodo}
+          setTodoId={setTodoId}
+        />
+      )}
+      {completedTodos.length > 0 && (
+        <Completed todos={completedTodos} handleCompleted={handleCompleted} />
+      )}
     </div>
   );
 }
