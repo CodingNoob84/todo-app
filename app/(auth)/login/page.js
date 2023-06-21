@@ -1,7 +1,8 @@
 "use client";
 import { useAuth } from "@/context/AuthContext";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { FcGoogle } from "react-icons/fc";
 
 const ValidationFunction = (email, password) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -19,24 +20,24 @@ const ValidationFunction = (email, password) => {
 
 function LoginPage() {
   const router = useRouter();
-  if (currentUser) {
-    router.push("/");
-  }
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const { login, signup, currentUser } = useAuth();
+  const { login, signup, signupwithGoogle, currentUser } = useAuth();
+  useEffect(() => {
+    if (currentUser) {
+      router.push("/");
+    }
+  }, [currentUser, router]);
   const handleGoogleSignIn = async () => {
-    const result = await signup();
-    console.log(result);
+    const result = await signupwithGoogle();
+    //console.log(result);
   };
 
   const handleLogin = async () => {
     setError(ValidationFunction(email, password));
     if (error === null) {
-      console.log(`email=${email}; password=${password}`);
-      const result = await login(email, password);
-      console.log(result);
+      await login(email, password);
     }
   };
 
@@ -70,7 +71,7 @@ function LoginPage() {
               className="outline-none bg-slate-800 p-2"
             />
           </div>
-          <div className="flex justify-center items-center my-[30px] ">
+          <div className="flex justify-center items-center my-[10px] ">
             <button
               type="button"
               className="outline-none w-[100px] bg-slate-800 p-2 border border-slate-900 hover:bg-violet-500 rounded-lg "
@@ -79,11 +80,20 @@ function LoginPage() {
               Submit
             </button>
           </div>
+          <div className="flex justify-center items-center">or</div>
+          <div
+            className="flex flex-row border border-violet-400 px-3 py-2 justify-center items-center hover:bg-violet-400 hover:text-slate-200 cursor-pointer"
+            onClick={() => handleGoogleSignIn()}
+          >
+            <FcGoogle />
+            <div className="ml-4">Login with Google</div>
+          </div>
+
           <div className="flex flex-row justify-center text-xs gap-2">
             <div>Create a new account? </div>
             <div
               className="underline text-violet-500 cursor-pointer"
-              onClick={() => handleGoogleSignIn()}
+              onClick={() => router.push("/register")}
             >
               Register
             </div>

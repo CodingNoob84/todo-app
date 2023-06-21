@@ -46,13 +46,13 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  function signup() {
+  function signupwithGoogle() {
     const googleAuth = new GoogleAuthProvider();
     signInWithPopup(auth, googleAuth);
     return;
   }
 
-  const createUser = (email, password, username) => {
+  function signup(email, password, username) {
     return createUserWithEmailAndPassword(auth, email, password).then(
       (userCredential) => {
         const user = userCredential.user;
@@ -61,7 +61,7 @@ export function AuthProvider({ children }) {
         });
       }
     );
-  };
+  }
 
   function login(email, password) {
     return signInWithEmailAndPassword(auth, email, password);
@@ -83,6 +83,7 @@ export function AuthProvider({ children }) {
     currentUser,
     login,
     signup,
+    signupwithGoogle,
     logout,
     createUser,
   };

@@ -26,7 +26,7 @@ function TodosData({ todos, setTodos, setTodo, setTodoId }) {
   //console.log(todos);
   const { currentUser } = useAuth();
   const { newTodos, completedTodos } = onSplitArray(todos);
-  console.log(completedTodos);
+  //console.log(completedTodos);
   const handleCompleted = async (id, stageupdate) => {
     const updatedTodos = todos.map((todo) => {
       if (todo.id === id) {
