@@ -77,19 +77,19 @@ function TodosData({ todos, setTodos, setTodo, setTodoId }) {
     const userRef = doc(db, "users", currentUser.uid);
     await setDoc(userRef, { todos: updatedTodos }, { merge: true });
   };
-  useEffect(() => {
-    const deleteExpiredItemsAndUpdateDatabase = async () => {
-      //console.log(todos);
-      const updatedTodos = deleteExpiredItems(todos);
-      console.log(updatedTodos);
-      setTodos(updatedTodos);
+  //   useEffect(() => {
+  //     const deleteExpiredItemsAndUpdateDatabase = async () => {
+  //       //console.log(todos);
+  //       const updatedTodos = deleteExpiredItems(todos);
+  //       console.log(updatedTodos);
+  //       setTodos(updatedTodos);
 
-      const userRef = doc(db, "users", currentUser.uid);
-      await setDoc(userRef, { todos: updatedTodos }, { merge: true });
-    };
+  //       const userRef = doc(db, "users", currentUser.uid);
+  //       await setDoc(userRef, { todos: updatedTodos }, { merge: true });
+  //     };
 
-    deleteExpiredItemsAndUpdateDatabase();
-  }, [todos, setTodos, currentUser]);
+  //     deleteExpiredItemsAndUpdateDatabase();
+  //   }, []);
 
   return (
     <div className="flex flex-col justify-center items-center md:items-start gap-[10px] md:flex-row">
