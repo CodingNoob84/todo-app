@@ -3,6 +3,7 @@ import { useAuth } from "@/context/AuthContext";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
+import { FaSpinner } from "react-icons/fa";
 
 const ValidationFunction = (email, password) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -23,33 +24,58 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const { login, signup, signupwithGoogle, currentUser } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const { login, signupwithGoogle, currentUser } = useAuth();
   useEffect(() => {
     if (currentUser) {
       router.push("/");
     }
   }, [currentUser, router]);
   const handleGoogleSignIn = async () => {
-    const result = await signupwithGoogle();
+    await signupwithGoogle()
+      .then((result) => {
+        setLoading(false);
+        if (result.success) {
+          router.push("/");
+        } else {
+          setError(result.error);
+        }
+      })
+      .catch((error) => {
+        setError("An unexpected error occurred:");
+      });
     //console.log(result);
   };
 
   const handleLogin = async () => {
+    setError(null);
+    setLoading(true);
     setError(ValidationFunction(email, password));
     if (error === null) {
-      await login(email, password);
+      await login(email, password)
+        .then((result) => {
+          setLoading(false);
+          if (result.success) {
+            router.push("/");
+          } else {
+            setError(result.error);
+          }
+        })
+        .catch((error) => {
+          setError("An unexpected error occurred:");
+        });
     }
   };
 
   return (
     <div className="min-w-screen min-h-screen flex justify-center items-center bg-gradient-to-r from-purple-200 via-purple-400 to-purple-800">
-      <div className="w-[350px] h-[420px] p-5 flex flex-col gap-5 border bg-slate-900 text-white shadow-2xl shadow-violet-600">
+      <div className="w-[350px] h-[480px] p-5 flex flex-col gap-5 border bg-slate-900 text-white shadow-2xl shadow-violet-600">
         <div className="text-xl font-bold uppercase flex justify-center items-center">
           Login
         </div>
         {error && (
-          <div className="flex justify-center text-red-700">
-            Invalid Email or Password
+          <div className="flex justify-center text-red-700 text-sm">
+            {error}
           </div>
         )}
         <div className="flex flex-col gap-2">
@@ -74,10 +100,14 @@ function LoginPage() {
           <div className="flex justify-center items-center my-[10px] ">
             <button
               type="button"
-              className="outline-none w-[100px] bg-slate-800 p-2 border border-slate-900 hover:bg-violet-500 rounded-lg "
+              className="outline-none flex justify-center w-[100px] bg-slate-800 p-2 border border-slate-900 hover:bg-violet-500 rounded-lg "
               onClick={() => handleLogin()}
             >
-              Submit
+              {loading ? (
+                <FaSpinner className="transition-all duration-100 animate-spin" />
+              ) : (
+                "Submit"
+              )}
             </button>
           </div>
           <div className="flex justify-center items-center">or</div>

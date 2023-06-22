@@ -5,7 +5,7 @@ import { TbReload } from "react-icons/tb";
 function Completed({ todos, handleCompleted }) {
   return (
     <div className="relative">
-      <div className="absolute -top-2 left-[90px] w-[120px] bg-red-900 px-2 text-xl font-bold text-center rounded-md">
+      <div className="absolute -top-2 left-[90px] w-[120px] bg-cyan-600 px-2 text-xl font-bold text-center rounded-md">
         Completed
       </div>
       <div className="border bg-slate-900 text-white w-[300px]">
@@ -13,7 +13,7 @@ function Completed({ todos, handleCompleted }) {
           {todos?.map((todo, i) => (
             <div
               key={i}
-              className="border border-cyan-500 flex flex-row justify-center items-center gap-1 px-3"
+              className="border border-cyan-500 flex flex-row justify-center items-center gap-1 px-3 scale-80 transition-all duration-200 hover:scale-110 hover:border-cyan-500"
             >
               <div className="flex-1 py-2 text-xs">{todo.desc}</div>
               <TbReload

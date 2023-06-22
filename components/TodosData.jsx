@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import NewTodo from "./NewTodo";
 import Completed from "./Completed";
 import useFetchTodos from "@/hooks/fetchTodos";
@@ -8,7 +8,7 @@ import { db } from "@/firebase/firebaseConfig";
 import Deleted from "./Deleted";
 
 function onSplitArray(todos) {
-  console.log(todos);
+  //console.log(todos);
   const newTodos = [];
   const completedTodos = [];
   const deletedTodos = [];
@@ -30,8 +30,33 @@ function onSplitArray(todos) {
   return { newTodos, completedTodos, deletedTodos };
 }
 
+function deleteExpiredItems(array) {
+  const currentTime = new Date();
+
+  const updatedTodos = array.filter((todo) => {
+    if (
+      todo.stage === "deleted" &&
+      todo.datetime &&
+      todo.datetime.hasOwnProperty("seconds")
+    ) {
+      const todoTime = new Date(
+        todo.datetime.seconds * 1000 + todo.datetime.nanoseconds / 1000000
+      );
+      const timeDifferenceInMilliseconds = currentTime - todoTime;
+      const timeDifferenceInHours = Math.floor(
+        timeDifferenceInMilliseconds / (1000 * 60 * 60)
+      );
+
+      return timeDifferenceInHours <= 23;
+    }
+    return true;
+  });
+
+  return updatedTodos;
+}
+
 function TodosData({ todos, setTodos, setTodo, setTodoId }) {
-  //console.log(todos);
+  //console.log("deleted", deleteExpiredItems(todos));
   const { currentUser } = useAuth();
   const { newTodos, completedTodos, deletedTodos } = onSplitArray(todos);
   //console.log(completedTodos);
@@ -52,6 +77,20 @@ function TodosData({ todos, setTodos, setTodo, setTodoId }) {
     const userRef = doc(db, "users", currentUser.uid);
     await setDoc(userRef, { todos: updatedTodos }, { merge: true });
   };
+  useEffect(() => {
+    const deleteExpiredItemsAndUpdateDatabase = async () => {
+      //console.log(todos);
+      const updatedTodos = deleteExpiredItems(todos);
+      console.log(updatedTodos);
+      setTodos(updatedTodos);
+
+      const userRef = doc(db, "users", currentUser.uid);
+      await setDoc(userRef, { todos: updatedTodos }, { merge: true });
+    };
+
+    deleteExpiredItemsAndUpdateDatabase();
+  }, [todos, setTodos, currentUser]);
+
   return (
     <div className="flex flex-col justify-center items-center md:items-start gap-[10px] md:flex-row">
       {newTodos.length > 0 && (

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { FcGoogle } from "react-icons/fc";
+import { FaSpinner } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 
 const ValidationFunction = (username, email, password) => {
@@ -26,6 +27,7 @@ function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const { signup, signupwithGoogle, currentUser } = useAuth();
   //console.log(currentUser);
@@ -34,13 +36,35 @@ function RegisterPage() {
     setError(ValidationFunction(username, email, password));
     if (error === null) {
       //console.log(`username=${username}; email=${email}; password=${password}`);
-      const result = await signup(email, password, username);
+      await signup(email, password, username)
+        .then((result) => {
+          setLoading(false);
+          if (result.success) {
+            router.push("/");
+          } else {
+            setError(result.error);
+          }
+        })
+        .catch((error) => {
+          setError("An unexpected error occurred:");
+        });
       //console.log(result);
     }
   };
 
   const handleGoogleSignIn = async () => {
-    const result = await signupwithGoogle();
+    await signupwithGoogle()
+      .then((result) => {
+        setLoading(false);
+        if (result.success) {
+          router.push("/");
+        } else {
+          setError(result.error);
+        }
+      })
+      .catch((error) => {
+        setError("An unexpected error occurred:");
+      });
     //console.log(result);
   };
 
@@ -48,7 +72,7 @@ function RegisterPage() {
     if (currentUser) {
       router.push("/");
     }
-  }, [currentUser]);
+  }, [currentUser, router]);
   return (
     <div className="min-w-screen min-h-screen flex justify-center items-center bg-gradient-to-r from-purple-200 via-purple-400 to-purple-800">
       <div className="w-[350px] h-[500px] p-5 flex flex-col gap-5 border bg-slate-900 text-white shadow-2xl shadow-violet-600">
@@ -92,7 +116,11 @@ function RegisterPage() {
               onClick={() => submitHandler()}
               className="outline-none w-[100px] bg-slate-800 p-2 border border-slate-900 hover:bg-violet-500 rounded-lg "
             >
-              Submit
+              {loading ? (
+                <FaSpinner className="transition-all duration-100 animate-spin" />
+              ) : (
+                "Submit"
+              )}
             </button>
           </div>
           <div className="flex justify-center items-center">or</div>

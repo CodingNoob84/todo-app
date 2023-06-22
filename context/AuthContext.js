@@ -46,25 +46,90 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  function signupwithGoogle() {
-    const googleAuth = new GoogleAuthProvider();
-    signInWithPopup(auth, googleAuth);
-    return;
-  }
+  async function signupwithGoogle() {
+    try {
+      const googleAuth = new GoogleAuthProvider();
+      const userCredential = await signInWithPopup(auth, googleAuth);
+      const user = userCredential.user;
 
-  function signup(email, password, username) {
-    return createUserWithEmailAndPassword(auth, email, password).then(
-      (userCredential) => {
-        const user = userCredential.user;
-        return updateProfile(user, { displayName: username }).then(() => {
-          return user.user;
-        });
+      return {
+        success: true,
+        message: "Google signup successful.",
+        user: user,
+      };
+    } catch (error) {
+      let errorMessage;
+      if (error.code === "auth/popup-closed-by-user") {
+        errorMessage = "Google signup canceled by the user.";
+      } else {
+        errorMessage =
+          "An error occurred during Google signup. Please try again later.";
       }
-    );
+
+      return {
+        success: false,
+        error: errorMessage,
+      };
+    }
   }
 
-  function login(email, password) {
-    return signInWithEmailAndPassword(auth, email, password);
+  async function signup(email, password, username) {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      await updateProfile(user, { displayName: username });
+
+      return {
+        success: true,
+        message: "Signup successful.",
+        user: user,
+      };
+    } catch (error) {
+      let errorMessage;
+      if (error.code === "auth/email-already-in-use") {
+        errorMessage =
+          "The email address is already in use. Please choose a different email.";
+      } else if (error.code === "auth/weak-password") {
+        errorMessage =
+          "The password is too weak. Please choose a stronger password.";
+      } else {
+        errorMessage =
+          "An error occurred during signup. Please try again later.";
+      }
+
+      return {
+        success: false,
+        error: errorMessage,
+      };
+    }
+  }
+
+  async function login(email, password) {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      return {
+        success: true,
+        message: "Login successful.",
+      };
+    } catch (error) {
+      let errorMessage;
+      if (error.code === "auth/user-not-found") {
+        errorMessage = "User not found.";
+      } else if (error.code === "auth/wrong-password") {
+        errorMessage = "Wrong password.";
+      } else {
+        errorMessage =
+          "An error occurred during login. Please try again later.";
+      }
+      return {
+        success: false,
+        error: errorMessage,
+      };
+    }
   }
 
   function logout() {

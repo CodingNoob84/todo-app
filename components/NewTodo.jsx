@@ -8,7 +8,7 @@ import { TiTick } from "react-icons/ti";
 function NewTodo({ todos, handleCompleted, setTodo, setTodoId }) {
   return (
     <div className="relative">
-      <div className="absolute -top-2 left-[115px] w-[70px] bg-red-900 px-2 text-xl font-bold text-center rounded-md">
+      <div className="absolute -top-2 left-[115px] w-[70px] bg-violet-600 px-2 text-xl font-bold text-center rounded-md">
         New
       </div>
       <div className="border bg-slate-900 text-white w-[300px]">
@@ -16,7 +16,7 @@ function NewTodo({ todos, handleCompleted, setTodo, setTodoId }) {
           {todos?.map((todo, i) => (
             <div
               key={i}
-              className="border border-violet-500 flex flex-row justify-center items-center gap-1 px-3"
+              className="border border-violet-500 flex flex-row justify-center items-center gap-1 px-3 scale-80 transition-all duration-200 hover:scale-110 hover:border-violet-700 "
             >
               <div className="flex-1 py-2 text-xs">{todo.desc}</div>
               <TiTick

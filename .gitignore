@@ -4,6 +4,8 @@
 /node_modules
 /.pnp
 .pnp.js
+.firebase
+.github\workflows
 
 # testing
 /coverage
@@ -33,3 +35,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+#firebase
+.firebaserc
+firebase.json
