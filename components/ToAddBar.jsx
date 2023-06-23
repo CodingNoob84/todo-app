@@ -56,6 +56,16 @@ function ToAddBar({ todo, setTodo, todos, setTodos, todoId, setTodoId }) {
     setTodo("");
     setTodoId("");
   };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      if (todoId === "") {
+        handleAdd();
+      } else {
+        handleEdit();
+      }
+    }
+  };
   return (
     <div className="flex justify-center items-center">
       <div className="bg-slate-900 m-4 md:w-[600px] ">
@@ -64,6 +74,7 @@ function ToAddBar({ todo, setTodo, todos, setTodos, todoId, setTodoId }) {
             type="text"
             value={todo}
             onChange={(e) => setTodo(e.target.value)}
+            onKeyDown={(e) => handleKeyPress(e)}
             className="bg-slate-700 flex-1 p-2 outline-none focus-none"
           />
           {todoId === "" ? (
